@@ -418,7 +418,6 @@ fn main() {
                 if cmd[1] == "nettest" {
                     exec(cmd[1], id, netid);
                 } else {
-                    println!("running command {}", cmd[1]);
                     exec(cmd[1], id, ObjID::new(0));
                 }
             } else {
