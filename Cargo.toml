@@ -12,7 +12,7 @@ members = [
     "src/bin/netmgr",
     "src/bin/nettest",
     "src/bin/pager",
-    "src/bin/hello",
+    "src/bin/crypto",
     "src/kernel",
     "src/lib/twizzler-queue-raw",
     "src/lib/twizzler-queue",
@@ -38,7 +38,7 @@ initrd = [
     "crate:netmgr",
     "crate:nettest",
     "crate:pager",
-    "crate:hello",
+    "crate:crypto",
     #"lib:twz-rt",
     #"lib:monitor",
     #"third-party:hello-world-rs"
