@@ -28,7 +28,7 @@ fn main() {
     // Verification
     use p256::ecdsa::{signature::Verifier, VerifyingKey};
 
-    let verifying_key = VerifyingKey::from(&signing_key); // Serialize with `::to_encoded_point()`
+    let verifying_key: VerifyingKey = signing_key.into(); // Serialize with `::to_encoded_point()`
     assert!(verifying_key.verify(message, &signature).is_ok());
 
     println!("Signature test passed!");
