@@ -1,9 +1,8 @@
 extern crate twizzler_abi;
-use std::io::Read;
 
 use hex_literal::hex;
 use p256::ecdsa::{signature::Signer, Signature, SigningKey};
-use sha2::{Digest, Sha256, Sha512};
+use sha2::{Digest, Sha256};
 fn main() {
     println!("Hello, from crypto");
 
