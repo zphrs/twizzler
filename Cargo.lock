@@ -3426,6 +3426,7 @@ dependencies = [
  "nonoverlapping_interval_tree",
  "object",
  "p256",
+ "sha2",
  "slabmalloc",
  "smccc",
  "syscall_encode",
