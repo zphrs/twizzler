@@ -1,5 +1,3 @@
-use core::array::IntoIter;
-
 use p256::ecdsa::{
     signature::{self, Signer, Verifier},
     Signature, SigningKey, VerifyingKey,
@@ -10,7 +8,7 @@ use sha2::{
         generic_array::GenericArray,
         typenum::{UInt, UTerm},
     },
-    Digest, Sha256, Sha512,
+    Digest, Sha256,
 };
 
 pub fn sha256(
@@ -43,7 +41,6 @@ mod test {
 
     #[kernel_test]
     fn test_hashing() {
-        let mut hasher = Sha256::new();
         let expected = hex!("09ca7e4eaa6e8ae9c7d261167129184883644d07dfba7cbfbc4c8a2e08360d5b");
         let hash = sha256(b"hello, world");
         assert_eq!(hash[..], expected);
