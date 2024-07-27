@@ -38,6 +38,7 @@ mod pager;
 mod panic;
 mod processor;
 mod queue;
+mod random;
 mod sched;
 pub mod security;
 mod spinlock;
@@ -46,7 +47,6 @@ mod thread;
 mod time;
 mod userinit;
 pub mod utils;
-mod rand;
 extern crate alloc;
 
 extern crate bitflags;
@@ -57,6 +57,7 @@ use arch::BootInfoSystemTable;
 use initrd::BootModule;
 use memory::{MemoryRegion, VirtAddr};
 
+use self::random::{cpu_trng::CpuEntropy, EntropySource};
 use crate::{processor::current_processor, thread::entry::start_new_init};
 
 /// A collection of information made available to the kernel by the bootloader or arch-dep modules.
