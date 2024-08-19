@@ -42,6 +42,9 @@ log = "*"
 # for testing crypto
 hex-literal = { version = "0.4.1", default-features = false }
 rdrand = { version = "0.8.3", default-features = false }
+chacha20 = "0.9.1"
+digest = "0.10.7"
+time = { version = "0.3.36", default-features = false }
 
 [target.x86_64-unknown-none.dependencies]
 rdrand = { version = "0.8.3", default-features = false }
