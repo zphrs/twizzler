@@ -29,6 +29,7 @@ mod device;
 mod idcounter;
 mod image;
 mod initrd;
+mod instant;
 mod interrupt;
 pub mod machine;
 pub mod memory;
