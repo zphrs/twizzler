@@ -9,3 +9,7 @@
 [submodule "src/abi"]
 	path = src/abi
 	url = ../../twizzler-operating-system/abi.git
+[submodule "src/lib/getrandom-twizzler"]
+	path = src/lib/getrandom-twizzler
+	url = ../getrandom-twizzler.git
+	branch = twizzler

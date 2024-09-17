@@ -33,6 +33,7 @@ members = [
     "src/lib/logboi",
     "src/srv/logboi-srv",
     "src/bin/logboi-test",
+    "src/lib/getrandom-twizzler",
 ]
 
 exclude = ["toolchain/src/rust"]
