@@ -30,6 +30,7 @@ mod device;
 mod idcounter;
 mod image;
 mod initrd;
+mod instant;
 mod interrupt;
 pub mod machine;
 pub mod memory;
@@ -41,6 +42,7 @@ mod pager;
 mod panic;
 mod processor;
 mod queue;
+mod random;
 mod sched;
 pub mod security;
 mod spinlock;
@@ -58,7 +60,9 @@ use core::sync::atomic::{AtomicBool, Ordering};
 use arch::BootInfoSystemTable;
 use initrd::BootModule;
 use memory::{MemoryRegion, VirtAddr};
+use random::start_entropy_contribution_thread;
 
+use self::random::{cpu_trng::CpuEntropy, EntropySource};
 use crate::{processor::current_processor, thread::entry::start_new_init};
 
 /// A collection of information made available to the kernel by the bootloader or arch-dep modules.
@@ -154,6 +158,7 @@ pub fn idle_main() -> ! {
     interrupt::set(true);
     if current_processor().is_bsp() {
         machine::machine_post_init();
+        start_entropy_contribution_thread();
 
         #[cfg(test)]
         if is_test_mode() {
