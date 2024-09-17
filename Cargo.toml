@@ -12,6 +12,7 @@ members = [
     "src/bin/pager",
     "src/bin/mnemosyne",
     "src/bin/stdfs_demo",
+    "src/bin/random_validation",
     "src/kernel",
     "src/lib/twizzler-queue-raw",
     "src/lib/twizzler-queue",
@@ -53,6 +54,7 @@ initrd = [
     "crate:stdfs_demo",
     "crate:logboi-test",
     "lib:logboi-srv",
+    "crate:random_validation",
     #"third-party:hello-world-rs"
 ]
 
