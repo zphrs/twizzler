@@ -11,5 +11,5 @@
 	url = ../../twizzler-operating-system/abi.git
 [submodule "src/lib/getrandom-twizzler"]
 	path = src/lib/getrandom-twizzler
-	url = ../getrandom-twizzler.git
+	url = ../twizzler-operating-system/getrandom-twizzler.git
 	branch = twizzler
