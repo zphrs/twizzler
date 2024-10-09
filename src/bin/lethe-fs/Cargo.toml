@@ -20,10 +20,11 @@ tickv = { version = "1.0.0" }
 async-trait = "0.1.66"
 volatile = "0.5"
 pci-ids = "0.2.4"
-obliviate-core = { path = "../../obliviate/obliviate-core" }
+kms = { path = "../../../../kms" }
 
 
 getrandom = { path = "../../lib/getrandom-twizzler" }
+rand = "0.8.5"
 
 [package.metadata]
 twizzler-build = "static"
