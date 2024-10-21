@@ -1474,7 +1474,7 @@ name = "genrandom"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "getrandom 0.2.10",
+ "getrandom",
  "layout",
  "lethe-gadget-fat",
  "nvme",
@@ -1502,16 +1502,6 @@ dependencies = [
  "wasi",
  "wasm-bindgen",
  "wasm-bindgen-test",
-]
-
-[[package]]
-name = "getrandom"
-version = "0.2.10"
-source = "git+https://github.com/twizzler-operating-system/getrandom-twizzler.git?branch=twizzler#36d30f909b58851ca29a86d3e456f06aad735126"
-dependencies = [
- "cfg-if 1.0.0",
- "libc",
- "wasi",
 ]
 
 [[package]]
@@ -2161,7 +2151,7 @@ name = "lethe_fs"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "getrandom 0.2.10",
+ "getrandom",
  "kms",
  "layout",
  "lethe-gadget-fat",
@@ -3072,7 +3062,7 @@ version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 dependencies = [
- "getrandom 0.2.10 (git+https://github.com/twizzler-operating-system/getrandom-twizzler.git?branch=twizzler)",
+ "getrandom",
 ]
 
 [[package]]
@@ -3100,7 +3090,7 @@ name = "random_validation"
 version = "0.1.0"
 dependencies = [
  "diehardest",
- "getrandom 0.2.10",
+ "getrandom",
  "twizzler-abi",
 ]
 
@@ -3137,7 +3127,7 @@ version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba009ff324d1fc1b900bd1fdb31564febe58a8ccc8a6fdbb93b543d33b13ca43"
 dependencies = [
- "getrandom 0.2.10 (git+https://github.com/twizzler-operating-system/getrandom-twizzler.git?branch=twizzler)",
+ "getrandom",
  "libredox",
  "thiserror",
 ]
@@ -4390,7 +4380,7 @@ version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "81dfa00651efa65069b0b6b651f4aaa31ba9e3c3ce0137aaad053604ee7e0314"
 dependencies = [
- "getrandom 0.2.10 (git+https://github.com/twizzler-operating-system/getrandom-twizzler.git?branch=twizzler)",
+ "getrandom",
  "serde",
 ]
 
