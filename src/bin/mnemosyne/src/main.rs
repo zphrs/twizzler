@@ -37,6 +37,10 @@ pub fn main() {
             println!("str: {:?}", &buf);
             println!("str: {:?}", String::from_utf8_lossy(&buf));
         }
+        "delete" => {
+            let mut fs = FileSystem::<Disk>::open(d);
+            // fs
+        }
         _ => panic!("Command is invalid"),
     }
 }

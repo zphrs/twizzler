@@ -8,3 +8,9 @@ edition = "2021"
 [dependencies]
 twizzler-abi = { path = "../../../lib/twizzler-abi" }
 layout = { path = "./layout" }
+kms = { path = "../../../lib/kms" }
+getrandom = { path = "../../../lib/getrandom-twizzler" }
+rand = "0.8.5"
+chacha20 = { version = "0.9.1", features = ["zeroize"] }
+#[package.metadata]
+#twizzler-build = "static"

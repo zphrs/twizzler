@@ -1,4 +1,5 @@
 use alloc::{vec, vec::Vec};
+use std::slice::Iter;
 
 use layout::{io::SeekFrom, ApplyLayout, Read, Seek, Write, IO};
 
@@ -116,6 +117,11 @@ impl<'a, S: Read + Write + Seek + IO> BlockIO<'a, S> {
         }
 
         Ok(())
+    }
+
+    pub fn get_all_allocated_blocks(&'a mut self) -> Result<&'a [u64], FSError<S::Error>> {
+        self.fill_blocks_to(None, false)?;
+        Ok(self.blocks.as_ref())
     }
 }
 
