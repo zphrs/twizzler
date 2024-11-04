@@ -1,4 +1,15 @@
+use std::mem::MaybeUninit;
+
+use chacha20::cipher::{KeyInit, StreamCipher, StreamCipherSeek};
+use kms::{
+    crypter::{aes::Aes256Ctr, ivs::SequentialIvg, Ivg, StatefulCrypter},
+    hasher::sha3::{Sha3_256, SHA3_256_MD_SIZE},
+    khf::{self, Khf},
+    wal::SecureWAL,
+    KeyManagementScheme, StableKeyManagementScheme,
+};
 use layout::{io::SeekFrom, ApplyLayout, Frame, Read, Seek, Write, IO};
+use rand::rngs::ThreadRng;
 
 use crate::{
     block_io::BlockIO,
@@ -13,23 +24,31 @@ pub enum FSError<E> {
     UnexpectedEof,
     WriteZero,
     IO(E),
+    Khf(khf::Error<<SequentialIvg as Ivg>::Error, <Aes256Ctr as StatefulCrypter>::Error>),
 }
 
 impl<E> From<E> for FSError<E> {
-    fn from(e: E) -> Self {
-        FSError::IO(e)
+    fn from(value: E) -> Self {
+        Self::IO(value)
     }
 }
 
 pub struct FileSystem<S> {
     pub disk: S, // todo pub
+    khf: Khf<rand::rngs::ThreadRng, SequentialIvg, Aes256Ctr, Sha3_256, { SHA3_256_MD_SIZE }>,
+    wal: SecureWAL<<Khf<ThreadRng, SequentialIvg, Aes256Ctr, Sha3_256, SHA3_256_MD_SIZE> as KeyManagementScheme>::LogEntry, SequentialIvg, Aes256Ctr, SHA3_256_MD_SIZE>
 }
 
 impl<S: Read + Write + Seek + IO> FileSystem<S> {
     const MAGIC_NUM: u64 = 0x1e0_15_c001;
+    const WAL_KEY: [u8; SHA3_256_MD_SIZE] = [0; SHA3_256_MD_SIZE];
 
     pub fn open(disk: S) -> Self {
-        Self { disk }
+        Self {
+            disk,
+            khf: Khf::new(), // TODO: make this persist with serde
+            wal: SecureWAL::open("", Self::WAL_KEY).unwrap(),
+        }
     }
 
     pub fn create(mut disk: S, block_size: u32) -> Result<Self, S::Error> {
@@ -63,7 +82,11 @@ impl<S: Read + Write + Seek + IO> FileSystem<S> {
             fat.set(i, FATEntry::None)?;
         }
 
-        Ok(Self { disk })
+        Ok(Self {
+            disk,
+            khf: Khf::new(),
+            wal: SecureWAL::open("", Self::WAL_KEY).unwrap(),
+        })
     }
 
     pub fn frame(&mut self) -> Result<FileSystemFrame<'_, S>, S::Error> {
@@ -87,9 +110,33 @@ impl<S: Read + Write + Seek + IO> FileSystem<S> {
         let mut fat = frame.fat()?;
 
         let free_head = fat.get(0)?;
-        fat.set(block, free_head)?;
+        fat.set(block, FATEntry::None)?;
         fat.set(0, FATEntry::Block(block))?;
 
+        Ok(())
+    }
+
+    pub fn unlink_object(&mut self, obj_id: u128) -> Result<(), FSError<S::Error>> {
+        self.khf
+            .delete(&self.wal, obj_id)
+            .map_err(|e| FSError::Khf(e))?;
+        let mut frame = self.frame()?;
+        let mut obj_lookup = frame.obj_lookup()?;
+        let hash: u64 = (obj_id % obj_lookup.len() as u128) as u64;
+        let bucket_start = obj_lookup.get(hash)?.unwrap();
+        let Some(bucket_start) = bucket_start else {
+            return Err(FSError::ObjNotFound);
+        };
+        drop(obj_lookup);
+        drop(frame);
+        let mut bucket_blocks = BlockIO::from_block(self, bucket_start, false)?;
+        let blocks = bucket_blocks.get_all_allocated_blocks()?.to_owned();
+        for block in blocks {
+            self.free_block(block)?;
+        }
+        let mut frame = self.frame()?;
+        let mut obj_lookup = frame.obj_lookup()?;
+        obj_lookup.set(hash, FATEntry::None);
         Ok(())
     }
 
@@ -99,16 +146,21 @@ impl<S: Read + Write + Seek + IO> FileSystem<S> {
 
         let hash = obj_id as u64 % obj_lookup.len();
         let bucket_start = obj_lookup.get(hash)?.unwrap();
+        drop(obj_lookup);
+        drop(frame);
+
+        self.khf
+            .derive_mut(&self.wal, obj_id)
+            .map_err(|e| FSError::Khf(e))?;
 
         let mut new = false;
         let mut bucket_blocks = match bucket_start {
             Some(bucket_start) => BlockIO::from_block(self, bucket_start, false)?,
             None => {
                 let bio = BlockIO::create(self, None)?.start_block(); // TODO
-
-                self.frame()?
-                    .obj_lookup()?
-                    .set(hash, FATEntry::Block(bio))?;
+                let mut frame = self.frame()?;
+                let mut obj_lookup = frame.obj_lookup()?;
+                obj_lookup.set(hash, FATEntry::Block(bio))?;
 
                 new = true;
 
@@ -183,6 +235,14 @@ impl<S: Read + Write + Seek + IO> FileSystem<S> {
         data_blocks.seek(SeekFrom::Start(off))?;
         data_blocks.read_exact(buf)?;
 
+        // let key = self
+        //     .khf
+        //     .derive(obj_id)?
+        //     .expect("A key should exist if the object exists.");
+        // let cipher = chacha20::ChaCha20::from_core(key);
+        // cipher.seek(off);
+        // cipher.apply_keystream(&mut buf);
+
         Ok(())
     }
 
@@ -212,6 +272,15 @@ impl<S: Read + Write + Seek + IO> FileSystem<S> {
                 break;
             }
         }
+
+        // let key = self
+        //     .khf
+        //     .derive(obj_id)?
+        //     .expect("A key should exist if the object exists.");
+        // let cipher = chacha20::ChaCha20::from_core(key);
+        // cipher.seek(off);
+        // let buf = buf.to_owned();
+        // cipher.apply_keystream(&mut buf);
 
         let mut data_blocks =
             BlockIO::from_block(self, data_start.ok_or(FSError::ObjNotFound)?, true)?;

@@ -2049,6 +2049,7 @@ name = "kms"
 version = "0.1.0"
 dependencies = [
  "aes",
+ "anyhow",
  "bincode",
  "blake3",
  "crc",
@@ -2064,6 +2065,7 @@ dependencies = [
  "serde",
  "serde_with",
  "sha3",
+ "tempfile",
  "thiserror",
  "uuid",
 ]
@@ -2142,30 +2144,12 @@ dependencies = [
 name = "lethe-gadget-fat"
 version = "0.1.0"
 dependencies = [
- "layout",
- "twizzler-abi",
-]
-
-[[package]]
-name = "lethe_fs"
-version = "0.1.0"
-dependencies = [
- "async-trait",
+ "chacha20",
  "getrandom",
  "kms",
  "layout",
- "lethe-gadget-fat",
- "nvme",
- "pci-ids",
  "rand",
- "tickv",
  "twizzler-abi",
- "twizzler-async",
- "twizzler-driver",
- "twizzler-net",
- "twizzler-object",
- "twizzler-queue",
- "volatile",
 ]
 
 [[package]]
@@ -2404,25 +2388,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "359f76430b20a79f9e20e115b3428614e654f04fab314482fc0fda0ebd3c6044"
 dependencies = [
  "windows-sys 0.48.0",
-]
-
-[[package]]
-name = "mnemosyne"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "layout",
- "lethe-gadget-fat",
- "nvme",
- "pci-ids",
- "tickv",
- "twizzler-abi",
- "twizzler-async",
- "twizzler-driver",
- "twizzler-net",
- "twizzler-object",
- "twizzler-queue",
- "volatile",
 ]
 
 [[package]]
