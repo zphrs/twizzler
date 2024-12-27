@@ -1,0 +1,22 @@
+[package]
+name = "twizzler-object-store"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fatfs = { git = "https://github.com/rafalh/rust-fatfs.git" }
+
+kms = { path = "./kms" }
+nvme = { path = "../nvme-rs" }
+twizzler-abi = { path = "../twizzler-abi", features = [
+    "runtime",
+] }
+twizzler-net = { path = "../twizzler-net" }
+twizzler-object = { path = "../twizzler-object" }
+twizzler-queue = { path = "../twizzler-queue" }
+twizzler-async = { path = "../twizzler-async" }
+twizzler-driver = { path = "../twizzler-driver" }
+tickv = { version = "1.0.0" }
+async-trait = "0.1.66"
+volatile = "0.5"
+pci-ids = "0.2.4"
