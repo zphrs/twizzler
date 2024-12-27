@@ -12,7 +12,7 @@ members = [
     "src/bin/pager",
     "src/bin/stdfs_demo",
     "src/bin/random_validation",
-    # "src/bin/genrandom",
+    "src/bin/genrandom",
     "src/kernel",
     "src/lib/twizzler-queue-raw",
     "src/lib/twizzler-queue",
