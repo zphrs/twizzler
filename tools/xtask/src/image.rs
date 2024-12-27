@@ -118,7 +118,11 @@ fn generate_data_folder(comp: &TwizzlerCompilation) -> PathBuf {
     destination
 }
 
-fn generate_initrd(initrd_files: Vec<PathBuf>, data_files: PathBuf, comp: &TwizzlerCompilation) -> anyhow::Result<PathBuf> {
+fn generate_initrd(
+    initrd_files: Vec<PathBuf>,
+    data_files: PathBuf,
+    comp: &TwizzlerCompilation,
+) -> anyhow::Result<PathBuf> {
     let initrd_path = get_genfile_path(comp, "initrd");
     let status = Command::new(get_tool_path(comp, "initrd_gen")?)
         .arg("--data")
@@ -179,7 +183,8 @@ fn build_initrd(cli: &ImageOptions, comp: &TwizzlerCompilation) -> anyhow::Resul
             }
         }
 
-        if let Some(ref test_comp) = comp.borrow_test_compilation() {
+        // all the tests for init to run.
+        if let Some(ref test_comp) = comp.borrow_user_test_compilation() {
             let mut testlist = String::new();
             for bin in test_comp.tests.iter() {
                 initrd_files.push(bin.path.clone());
@@ -202,7 +207,35 @@ fn build_initrd(cli: &ImageOptions, comp: &TwizzlerCompilation) -> anyhow::Resul
             assert!(!cli.tests && !cli.benches);
         }
 
+        let montest = comp
+            .borrow_user_test_compilation()
+            .as_ref()
+            .and_then(|utc| {
+                utc.tests
+                    .iter()
+                    .find_map(|p| {
+                        if p.unit.pkg.name() == "montest" {
+                            Some(p.path.file_name().unwrap().to_string_lossy().to_owned())
+                        } else {
+                            None
+                        }
+                    })
+                    .clone()
+            });
+
+        if let Some(montest) = montest {
+            let test_file_path = get_genfile_path(comp, "monitor_test_info");
+            let mut file = File::create(&test_file_path)?;
+            file.write_all(montest.as_bytes())?;
+            initrd_files.push(test_file_path);
+        }
+
         let mut lib_path = crate::toolchain::get_rustlib_lib(&cli.config.twz_triple().to_string())?;
+        let mut testso_path = crate::toolchain::get_rust_stage2_std(
+            guess_host_triple::guess_host_triple().unwrap(),
+            &cli.config.twz_triple().to_string(),
+        )?;
+        testso_path.push("libtest.so");
         let libstd_name = walkdir::WalkDir::new(lib_path.clone())
             .min_depth(1)
             .max_depth(2)
@@ -224,6 +257,7 @@ fn build_initrd(cli: &ImageOptions, comp: &TwizzlerCompilation) -> anyhow::Resul
             .to_owned();
 
         lib_path.push(libstd_name);
+        //initrd_files.push(testso_path);
         initrd_files.push(lib_path);
 
         Ok(initrd_files)
@@ -236,7 +270,7 @@ pub(crate) fn do_make_image(cli: ImageOptions) -> anyhow::Result<ImageInfo> {
     let initrd_files = build_initrd(&cli, &comp)?;
     let data_files = generate_data_folder(&comp);
     let initrd_path = generate_initrd(initrd_files, data_files, &comp)?;
-    
+
     crate::print_status_line("disk image", Some(&cli.config));
     let mut cmdline = String::new();
     if cli.tests {

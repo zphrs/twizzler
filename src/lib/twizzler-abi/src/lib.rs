@@ -14,15 +14,13 @@
 #![feature(core_intrinsics)]
 #![feature(int_roundings)]
 #![feature(thread_local)]
-#![feature(pointer_byte_offsets)]
 #![feature(auto_traits)]
 #![feature(negative_impls)]
 #![allow(internal_features)]
 #![feature(rustc_attrs)]
-#![feature(asm_const)]
 #![feature(linkage)]
-#![feature(error_in_core)]
 #![feature(test)]
+#![feature(c_variadic)]
 pub mod arch;
 
 #[allow(unused_extern_crates)]
@@ -30,14 +28,14 @@ extern crate alloc as rustc_alloc;
 
 pub mod aux;
 pub mod device;
+pub mod klog;
 pub mod kso;
 pub mod marker;
 pub mod meta;
 pub mod object;
 pub mod pager;
-#[cfg(feature = "runtime")]
-pub mod runtime;
 pub mod security;
+pub mod simple_mutex;
 pub mod slot;
 pub mod syscall;
 pub mod thread;
@@ -47,15 +45,14 @@ pub mod upcall;
 unsafe fn internal_abort() -> ! {
     cfg_if::cfg_if! {
     if #[cfg(feature = "runtime")] {
-        let runtime = twizzler_runtime_api::get_runtime();
-        runtime.abort();
+        runtime::OUR_RUNTIME.abort();
     } else {
         core::intrinsics::abort();
     }
     }
 }
 
-fn print_err(err: &str) {
+pub fn print_err(err: &str) {
     syscall::sys_kernel_console_write(err.as_bytes(), syscall::KernelConsoleWriteFlags::empty());
 }
 

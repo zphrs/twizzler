@@ -28,6 +28,7 @@ use crate::{
 
 core::arch::global_asm!(r#"
 /// Exception Vector Table Definition for EL1 (Kernel)
+.global __exception_vector_table
 
 // Table must be aligned on a 2048 byte boundary (0x800)
 .align {TABLE_ALIGNMENT}
@@ -421,7 +422,7 @@ macro_rules! exception_handler {
         #[naked]
         #[no_mangle]
         pub(super) unsafe extern "C" fn $name() {
-            core::arch::asm!(
+            core::arch::naked_asm!(
                 // save all general purpose registers (x0-x30)
                 // modify the stack pointer base
                 "sub sp, sp, {FRAME_SIZE}",
@@ -494,7 +495,6 @@ macro_rules! exception_handler {
                 "eret",
                 handler = sym $handler,
                 FRAME_SIZE = const core::mem::size_of::<ExceptionContext>(),
-                options(noreturn)
             )
         }
     };
