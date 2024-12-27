@@ -62,7 +62,10 @@ impl EntropySources {
             // add two events per source to each of the pools
             // Two events because fortuna::MIN_POOL_SIZE is 64 bytes and each event
             // is restricted to be 32 bytes at most
-            for _ in 0..fortuna::POOL_COUNT * 2 {
+            logln!("contributing entropy for source.");
+            for i in 0..fortuna::POOL_COUNT * 2 {
+                logln!("iteration {}.", i);
+
                 if let Ok(_) = source.0.try_fill_entropy(&mut buf) {
                     accumulator
                         .add_random_event(&mut source.1, &buf)
@@ -168,12 +171,14 @@ extern "C" fn contribute_entropy_regularly() {
             .call_once(|| Mutex::new(EntropySources::new()))
             .lock();
         entropy_sources.contribute_entropy(&mut acc);
+        logln!("Contributed entropy");
         drop(entropy_sources);
         drop(acc);
-        crate::syscall::sync::sys_thread_sync(&mut [], Some(&mut Duration::from_secs(1000)))
-            .expect(
-                "shouldn't panic because sys_thread_sync doesn't panic if no ops are passed in",
-            );
+        break;
+        // crate::syscall::sync::sys_thread_sync(&mut [], Some(&mut Duration::from_secs(1000)))
+        //     .expect(
+        //         "shouldn't panic because sys_thread_sync doesn't panic if no ops are passed in",
+        //     );
     }
 }
 
