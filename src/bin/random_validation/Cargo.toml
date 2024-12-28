@@ -6,9 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-twizzler-abi = { path = "../../lib/twizzler-abi" }
 getrandom = { path = "../../lib/getrandom-twizzler" }
 diehardest = "1.0.0"
+twizzler-runtime = { path = "../../rt" }
 
 [package.metadata]
 twizzler-build = "static"

@@ -21,13 +21,14 @@ impl Instant {
 
     #[allow(dead_code)]
     pub fn actually_monotonic() -> bool {
-        use twizzler_runtime_api::Monotonicity;
-        let runtime = twizzler_runtime_api::get_runtime();
-        match runtime.actual_monotonicity() {
-            Monotonicity::NonMonotonic => false,
-            Monotonicity::Weak => true,
-            Monotonicity::Strict => true,
-        }
+        // use twizzler_runtime_api::Monotonicity;
+        // let runtime = twizzler_runtime_api::get_runtime();
+        // match runtime.actual_monotonicity() {
+        //     Monotonicity::NonMonotonic => false,
+        //     Monotonicity::Weak => true,
+        //     Monotonicity::Strict => true,
+        // }
+        true
     }
 
     pub fn checked_sub_instant(&self, other: &Instant) -> Option<Duration> {

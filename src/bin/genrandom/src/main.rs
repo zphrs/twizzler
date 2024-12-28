@@ -1,6 +1,6 @@
 #![feature(new_uninit)]
 
-extern crate twizzler_abi;
+extern crate twizzler_runtime;
 
 use std::{
     fs::DirBuilder,
