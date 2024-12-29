@@ -69,4 +69,3 @@ features = ["spin_no_std"]
 
 
 twizzler-build = "kernel"
-intrusive-collections = { version = "0.9.6", features = ["nightly"] }

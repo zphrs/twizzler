@@ -38,3 +38,4 @@ target = "target-spec/x86_64-unknown-none.json"
 
 [unstable]
 build-std = ["core", "alloc"]
+build-std-features = []
