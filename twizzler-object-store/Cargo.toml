@@ -4,13 +4,19 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-fatfs = { git = "https://github.com/rafalh/rust-fatfs.git" }
+# excludes chrono from the featureset
+fatfs = { git = "https://github.com/rafalh/rust-fatfs.git", default-features = false, features = [
+    "std",
+    "alloc",
+    "lfn",
+    "unicode",
+    "log_level_trace",
+] }
+
 
 kms = { path = "./kms" }
 nvme = { path = "../nvme-rs" }
-twizzler-abi = { path = "../twizzler-abi", features = [
-    "runtime",
-] }
+twizzler-abi = { path = "../twizzler-abi", features = ["runtime"] }
 twizzler-net = { path = "../twizzler-net" }
 twizzler-object = { path = "../twizzler-object" }
 twizzler-queue = { path = "../twizzler-queue" }

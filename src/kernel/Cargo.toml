@@ -48,7 +48,6 @@ rdrand = { version = "0.8.3", default-features = false }
 
 
 [target.x86_64-unknown-none.dependencies]
-rdrand = { version = "0.8.3", default-features = false }
 uart_16550 = "0.3.0"
 x86 = "0.52.0"
 acpi = "4.1.1"
