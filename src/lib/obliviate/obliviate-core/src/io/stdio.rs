@@ -1,4 +1,4 @@
-use super::{DataSync, Io, Read, ReadAt, Seek, SeekFrom, Write, WriteAt};
+use super::{DataSync, Io, Read, Seek, SeekFrom, Write};
 
 pub struct StdIo<T> {
     inner: T,
@@ -32,21 +32,6 @@ impl<T: std::io::Read> Read for StdIo<T> {
     }
 }
 
-// impl<T: fatfs::Read> Read for StdIo<T>
-// where
-//     T::Error: std::error::Error,
-// {
-//     fn read(&mut self, buf: &mut [u8]) -> Result<usize, Self::Error> {
-//         self.inner.read(buf)
-//     }
-// }
-
-// impl<T: std::os::unix::fs::FileExt> ReadAt for StdIo<T> {
-//     fn read_at(&mut self, buf: &mut [u8], offset: u64) -> Result<usize, Self::Error> {
-//         self.inner.read_at(buf, offset)
-//     }
-// }
-
 impl<T: std::io::Write> Write for StdIo<T> {
     fn write(&mut self, buf: &[u8]) -> Result<usize, Self::Error> {
         self.inner.write(buf)
@@ -56,16 +41,6 @@ impl<T: std::io::Write> Write for StdIo<T> {
         self.inner.flush()
     }
 }
-
-// impl<T: std::os::unix::fs::FileExt + std::io::Write> WriteAt for StdIo<T> {
-//     fn write_at(&mut self, buf: &[u8], offset: u64) -> Result<usize, Self::Error> {
-//         self.inner.write_at(buf, offset)
-//     }
-
-//     fn flush(&mut self) -> Result<(), Self::Error> {
-//         self.inner.flush()
-//     }
-// }
 
 impl From<SeekFrom> for std::io::SeekFrom {
     fn from(value: SeekFrom) -> Self {
