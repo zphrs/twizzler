@@ -35,11 +35,12 @@ pub trait Read: Io {
             }
         }
 
-        if !buf.is_empty() {
-            panic!("unexpected EOF: failed to fill whole buffer");
-        } else {
-            Ok(())
-        }
+        // if !buf.is_empty() {
+        //      panic!("unexpected EOF: failed to fill whole buffer");
+        // } else {
+        //     Ok(())
+        // }
+        Ok(())
     }
 
     fn read_to_end(&mut self, buf: &mut Vec<u8>) -> Result<usize, Self::Error>

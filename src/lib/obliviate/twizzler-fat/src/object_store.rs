@@ -1,11 +1,13 @@
 use std::{
     collections::HashSet,
     io::Error,
-    sync::{LazyLock, Mutex, MutexGuard},
+    sync::{LazyLock, Mutex, MutexGuard, OnceLock},
 };
 
-use chacha20::cipher::{KeyIvInit, StreamCipher, StreamCipherSeek};
-use chacha20::ChaCha20;
+use chacha20::{
+    cipher::{KeyIvInit, StreamCipher, StreamCipherSeek},
+    ChaCha20,
+};
 use obliviate_core::{
     crypter::{aes::Aes256Ctr, ivs::SequentialIvg},
     hasher::sha3::{Sha3_256, SHA3_256_MD_SIZE},
@@ -28,11 +30,12 @@ type MyWal = SecureWAL<
 
 pub static KHF: LazyLock<Mutex<MyKhf>> = LazyLock::new(|| {
     let fs = FS.lock().unwrap();
+    // let file = fs.root_dir().create_file("lethe/khf");
     let khf = MyKhf::load(ROOT_KEY, "lethe/khf", &fs).unwrap_or_else(|_e| MyKhf::new());
     Mutex::new(khf)
 });
 // FIXME should use a randomly generated root key for each device.
-pub(crate) const ROOT_KEY: [u8; 32] = [0; 32];
+pub const ROOT_KEY: [u8; 32] = [0; 32];
 static WAL: LazyLock<Mutex<MyWal>> = LazyLock::new(|| {
     FS.lock().unwrap().root_dir().create_dir("lethe").unwrap();
     Mutex::new(SecureWAL::open("lethe/wal".to_string(), ROOT_KEY, &FS).unwrap())
@@ -48,7 +51,6 @@ use fatfs::{
 };
 
 // use obliviate_core::kms::khf::Khf;
-
 use crate::fs::{FS, PAGE_SIZE};
 use crate::{disk::Disk, fs::DISK, wrapped_extent::WrappedExtent};
 fn get_dir_path<'a>(

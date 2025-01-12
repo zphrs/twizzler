@@ -4122,6 +4122,8 @@ dependencies = [
 name = "object-store-test"
 version = "0.1.0"
 dependencies = [
+ "obliviate-core",
+ "rand",
  "twizzler-fat",
 ]
 

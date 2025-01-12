@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 twizzler-fat = { version = "0.1.0", path = "../../lib/obliviate/twizzler-fat" }
+obliviate-core = { version = "0.1.0", path = "../../lib/obliviate/obliviate-core" }
+rand = "0.8.0"

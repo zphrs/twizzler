@@ -10,6 +10,7 @@ use itertools::Itertools;
 use lru_mem::{HeapSize, LruCache};
 use serde::{Deserialize, Serialize};
 
+use super::{error::Error, node::Node, topology::Topology, Pos};
 use crate::{
     consts::KEY_CACHE_LIMIT,
     crypter::{aes::Aes256Ctr, ivs::SequentialIvg, Ivg, StatefulCrypter},
@@ -23,8 +24,6 @@ use crate::{
     syncfile::File,
     wal::SecureWAL,
 };
-
-use super::{error::Error, node::Node, topology::Topology, Pos};
 
 /// The default level for roots created when mutating a `Khf`.
 pub const DEFAULT_ROOT_LEVEL: u64 = 1;
@@ -917,7 +916,7 @@ where
                 File::options(&fs)
                     .read(true)
                     .write(true)
-                    .create(true)
+                    .create(false)
                     .open(path)
                     // TODO: better error handling
                     .map_err(|e| Error::Io(e.into()))?,
@@ -1297,8 +1296,8 @@ where
 
 //     struct KhfHarness {
 //         khf: Khf<ThreadRng, SequentialIvg, Aes256Ctr, Sha3_256, SHA3_256_MD_SIZE>,
-//         wal: SecureWAL<<Khf<ThreadRng, SequentialIvg, Aes256Ctr, Sha3_256, SHA3_256_MD_SIZE> as KeyManagementScheme>::LogEntry, SequentialIvg, Aes256Ctr, SHA3_256_MD_SIZE>,
-//     }
+//         wal: SecureWAL<<Khf<ThreadRng, SequentialIvg, Aes256Ctr, Sha3_256, SHA3_256_MD_SIZE> as
+// KeyManagementScheme>::LogEntry, SequentialIvg, Aes256Ctr, SHA3_256_MD_SIZE>,     }
 
 //     impl KhfHarness {
 //         fn wal_path(name: &str) -> String {
@@ -1515,8 +1514,8 @@ where
 
 //         // Derive the same keys using ranged derive.
 //         // The derived keys should be exactly the same.
-//         let ranged_keys: BTreeMap<_, _> = khf.ranged_derive_mut_inner(0, num_test_keys).collect();
-//         assert_eq!(keys, ranged_keys);
+//         let ranged_keys: BTreeMap<_, _> = khf.ranged_derive_mut_inner(0,
+// num_test_keys).collect();         assert_eq!(keys, ranged_keys);
 
 //         // for key_id in 0..num_test_keys {
 //         //     let expected = hex::encode(keys.get(&key_id).unwrap());
@@ -1567,8 +1566,8 @@ where
 //         // The derived keys should be exactly the same.
 //         let ranged_keys: BTreeMap<_, _> = khf
 //             .ranged_derive_mut_inner(0, num_test_keys)
-//             // .inspect(|(key_id, key)| eprintln!("key_id = {key_id}, key = {}", hex::encode(key)))
-//             .collect();
+//             // .inspect(|(key_id, key)| eprintln!("key_id = {key_id}, key = {}",
+// hex::encode(key)))             .collect();
 //         assert_eq!(keys, ranged_keys);
 
 //         // for key_id in 0..num_test_keys {
@@ -1631,8 +1630,8 @@ where
 //         // The derived keys should be exactly the same.
 //         let ranged_keys: BTreeMap<_, _> = khf
 //             .ranged_derive_mut_inner(0, max_test_keys)
-//             // .inspect(|(key_id, key)| eprintln!("key_id = {key_id}, key = {}", hex::encode(key)))
-//             .collect();
+//             // .inspect(|(key_id, key)| eprintln!("key_id = {key_id}, key = {}",
+// hex::encode(key)))             .collect();
 //         assert_eq!(keys, ranged_keys);
 
 //         // for key_id in 0..num_test_keys {
@@ -1695,8 +1694,8 @@ where
 //         // The derived keys should be exactly the same.
 //         let ranged_keys: BTreeMap<_, _> = khf
 //             .ranged_derive_mut_inner(0, max_test_keys)
-//             // .inspect(|(key_id, key)| eprintln!("key_id = {key_id}, key = {}", hex::encode(key)))
-//             .collect();
+//             // .inspect(|(key_id, key)| eprintln!("key_id = {key_id}, key = {}",
+// hex::encode(key)))             .collect();
 //         assert_eq!(keys, ranged_keys);
 
 //         // for key_id in 0..num_test_keys {
