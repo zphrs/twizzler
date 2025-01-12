@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-object-store = { version = "0.1.0", path = "object-store" }
+twizzler-fat = { version = "0.1.0", path = "../../lib/obliviate/twizzler-fat" }

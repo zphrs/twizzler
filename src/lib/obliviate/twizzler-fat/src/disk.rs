@@ -1,14 +1,21 @@
-use std::io::{self, Error, ErrorKind};
+use std::{
+    io::{self, Error, ErrorKind},
+    sync::Arc,
+};
 
 use fatfs::{IoBase, Read, Seek, SeekFrom, Write};
 use twizzler_async::block_on;
 
-use crate::nvme::{init_nvme, NvmeController};
+use crate::{
+    fs::{PAGE_SIZE, SECTOR_SIZE},
+    nvme::{init_nvme, NvmeController},
+};
 
 const DISK_SIZE: usize = 0x40000000;
 const PAGE_MASK: usize = 0xFFF;
 const LBA_COUNT: usize = DISK_SIZE / SECTOR_SIZE;
 
+#[derive(Clone)]
 pub struct Disk {
     ctrl: Arc<NvmeController>,
     pub pos: usize,

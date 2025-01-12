@@ -1,4 +1,6 @@
+#![feature(iterator_try_collect)]
 mod disk;
+mod fs;
 mod nvme;
 mod object_store;
 

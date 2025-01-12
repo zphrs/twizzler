@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["obliviate-core", "twizzler-fat"]
+exclude = ["rust-fatfs-obliviate"]
+
+[profile.release]
+debug = true

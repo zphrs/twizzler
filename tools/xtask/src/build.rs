@@ -28,7 +28,7 @@ use crate::{
     BuildOptions, CheckOptions, DocOptions, Profile,
 };
 
-fn locate_packages<'a>(workspace: &'a Workspace, kind: Option<&str>) -> Vec<Package> {
+pub fn locate_packages<'a>(workspace: &'a Workspace, kind: Option<&str>) -> Vec<Package> {
     workspace
         .members()
         .filter(|p| {

@@ -1,7 +1,7 @@
 #![feature(random)]
 use std::{io::Error, random::random};
 
-use object_store::*;
+use twizzler_fat::*;
 
 fn make_and_check_file(buf1: &mut [u8], buf2: &mut [u8]) -> (Vec<u8>, u128) {
     let id: u128 = random();
